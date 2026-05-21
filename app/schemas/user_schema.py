@@ -1,9 +1,28 @@
-from pydantic import BaseModel,EmailStr,Field  #validation
+from pydantic import BaseModel,validator #validation
 
 class UserCreate(BaseModel):
-    email:EmailStr
-    password:str = Field(min_length=6,max_length=20)
+    email:str
+    password:str
     role:str="freelancer"
+@validator("email")
+def validate_email(cls, value):
+
+        if "@" not in value:
+
+            raise ValueError("Enter valid email")
+
+        return value
+
+@validator("password")
+def validate_password(cls, value):
+
+        if len(value) < 6:
+
+            raise ValueError(
+                "Password must contain at least 6 characters"
+            )
+
+        return value
 
 class UserLogin(BaseModel):
     email:str
@@ -11,7 +30,7 @@ class UserLogin(BaseModel):
 
 class UserResponse(BaseModel):
     id:int
-    email:EmailStr
+    email:str
 
 class Config:
     from_attributes = True
